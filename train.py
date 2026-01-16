@@ -2,8 +2,9 @@ import torch.nn as nn
 from pathlib import Path
 from torchvision import transforms
 from modulars.data_setup import create_dataloaders
-from models.model import PatchEmbedding , MultiHeadSelfAttentionBlock
+from models.model import PatchEmbedding , MultiHeadSelfAttentionBlock , TransformerEncoderBlock
 import torch
+from torchinfo import summary
 
 image_path = Path("/Users/avinash/Desktop/VisionTransformer/data/pizza_steak_sushi")
 
@@ -62,16 +63,29 @@ if __name__ == "__main__":
     # 9. Add position embeddings
     patch_and_position_embedding = patch_embedded_image_with_classtoken + position_embeddings
 
-    print(patch_and_position_embedding)
-    multi_head_self_attn = MultiHeadSelfAttentionBlock(embed_dimension=768,num_heads=12)
+    # print(patch_and_position_embedding)
+    # multi_head_self_attn = MultiHeadSelfAttentionBlock(embed_dimension=768,num_heads=12)
 
-    print(multi_head_self_attn)
-    patch_through_msa_block = multi_head_self_attn(patch_and_position_embedding)
+    # print(multi_head_self_attn)
+    # patch_through_msa_block = multi_head_self_attn(patch_and_position_embedding)
+
+    # print(f"Input shape of MSA block: {patch_and_position_embedding.shape}")
+
+    # print(f"Output shape MSA block: {patch_through_msa_block.shape}")
 
 
-    print(f"Input shape of MSA block: {patch_and_position_embedding.shape}")
+    transformer_encoder_block = TransformerEncoderBlock(embed_dimension=768,
+                                                        num_heads=12,
+                                                        mlp_size=3072,
+                                                        mlp_dropout=0.1,
+                                                        attn_dropout=0.1)
 
-    print(f"Output shape MSA block: {patch_through_msa_block.shape}")
+    # # Print an input and output summary of our Transformer Encoder (uncomment for full output)
+    summary(model=transformer_encoder_block,
+        input_size=(1, 197, 768), # (batch_size, num_patches, embedding_dimension)
+        col_names=["input_size", "output_size", "num_params", "trainable"],
+        col_width=20,
+        row_settings=["var_names"])
 
 
 
