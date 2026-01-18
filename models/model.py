@@ -31,7 +31,6 @@ class VIT(nn.Module):
                                               patch_size=patch_size,
                                               embedding_dim=embedding_dim)
         
-       
         self.encoder = nn.Sequential(
             *[TransformerEncoderBlock(
                 embed_dimension=embedding_dim,
